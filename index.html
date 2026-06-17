@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discourse Helper — AI-Powered Discourse Analysis</title>
+  <meta name="description" content="AI assistant for discourse analysis, communication studies, media literacy, and linguistic research." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Marked.js for markdown rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+  <style>
+/* ============================================================
+   DISCOURSE HELPER — STYLESHEET
+   Color tokens, typography, layout, components, dark mode
+   ============================================================ */
+
+/* ---- CSS VARIABLES (LIGHT THEME) ---- */
+:root {
+  --navy:        #0A1628;
+  --navy-mid:    #112040;
+  --blue:        #2563EB;
+  --blue-hover:  #1D4ED8;
+  --sky:         #38BDF8;
+  --sky-light:   #E0F2FE;
+  --bg:          #F8FAFF;
+  --bg-alt:      #EEF3FB;
+  --surface:     #FFFFFF;
+  --surface2:    #F1F5FD;
+  --border:      #DDE4F0;
+  --text:        #0F172A;
+  --text-mid:    #334155;
+  --text-muted:  #64748B;
+  --text-light:  #94A3B8;
+  --success:     #10B981;
+  --error:       #EF4444;
+  --radius-sm:   6px;
+  --radius:      12px;
+  --radius-lg:   20px;
+  --shadow-sm:   0 1px 4px rgba(10,22,40,.06);
+  --shadow:      0 4px 20px rgba(10,22,40,.09);
+  --shadow-lg:   0 12px 48px rgba(10,22,40,.14);
+  --transition:  .2s ease;
+  --nav-h:       64px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+}
+
+/* ---- DARK THEME ---- */
+[data-theme="dark"] {
+  --navy:        #E0ECFF;
+  --bg:          #0C1526;
+  --bg-alt:      #111D33;
+  --surface:     #162035;
+  --surface2:    #1C2A45;
+  --border:      #253554;
+  --text:        #E8F0FF;
+  --text-mid:    #B8C9E8;
+  --text-muted:  #7A92B8;
+  --text-light:  #4A6080;
+  --sky-light:   #0A2040;
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.3);
+  --shadow:      0 4px 20px rgba(0,0,0,.35);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.5);
+}
+
+/* ---- RESET & BASE ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+a { color: var(--blue); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--blue-hover); }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+button { cursor: pointer; font-family: inherit; }
+textarea, input, select { font-family: inherit; }
+
+/* ---- TYPOGRAPHY ---- */
+h1, h2, h3 { line-height: 1.2; font-weight: 700; color: var(--text); }
+h4, h5, h6 { line-height: 1.3; }
+
+/* ---- LAYOUT ---- */
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 80px 0;
+}
+
+.section-alt {
+  background: var(--bg-alt);
+}
+
+/* ---- BUTTONS ---- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 22px;
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 2px 12px rgba(37,99,235,.3);
+}
+.btn-primary:hover {
+  background: var(--blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,.35);
+}
+.btn-primary.btn-lg { padding: 14px 30px; font-size: 1rem; border-radius: var(--radius-lg); }
+.btn-full { width: 100%; justify-content: center; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text-mid);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 22px;
+  font-size: .9rem;
+  font-weight: 500;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--sky-light); }
+.btn-ghost.btn-lg { padding: 14px 30px; font-size: 1rem; border-radius: var(--radius-lg); }
+
+/* ---- SECTION HEADER ---- */
+.section-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.section-eyebrow {
+  display: inline-block;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ======================================================
+   NAVIGATION
+   ====================================================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+[data-theme="dark"] .navbar {
+  background: rgba(12,21,38,.9);
+}
+.nav-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.logo-icon {
+  font-size: 1.4rem;
+  color: var(--blue);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color var(--transition), background var(--transition);
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--blue);
+  background: var(--sky-light);
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.theme-toggle {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: border-color var(--transition), background var(--transition);
+}
+.theme-toggle:hover { background: var(--bg-alt); }
+.nav-cta { font-size: .85rem; padding: 8px 18px; }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: background var(--transition);
+}
+
+/* Mobile nav */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 200;
+}
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 260px;
+  height: 100%;
+  background: var(--surface);
+  z-index: 201;
+  padding: 24px;
+  transition: right .28s ease;
+  box-shadow: var(--shadow-lg);
+}
+.mobile-nav.open { right: 0; }
+.mobile-nav-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+.mobile-nav ul { margin-top: 48px; display: flex; flex-direction: column; gap: 4px; }
+.mobile-nav a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background var(--transition);
+}
+.mobile-nav a:hover { background: var(--bg-alt); }
+
+/* ======================================================
+   HERO SECTION
+   ====================================================== */
+.hero {
+  position: relative;
+  min-height: calc(100vh - var(--nav-h));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  padding: 80px 24px;
+  max-width: 1160px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+#heroCanvas {
+  width: 100%;
+  height: 100%;
+  opacity: .5;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  display: inline-block;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--blue);
+}
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-mid);
+  max-width: 480px;
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 44px;
+}
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+.stat strong { font-size: 1.5rem; color: var(--blue); font-weight: 700; }
+.stat span { font-size: .8rem; color: var(--text-muted); }
+.stat-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+}
+
+/* Floating cards (hero visual) */
+.hero-visual {
+  position: relative;
+  z-index: 1;
+  height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.floating-card {
+  position: absolute;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  font-size: .88rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  animation: float 4s ease-in-out infinite;
+}
+.fc-icon { font-size: 1.1rem; }
+.fc1 { top: 10%; left: 5%; animation-delay: 0s; }
+.fc2 { top: 45%; right: 0%; animation-delay: 1.4s; }
+.fc3 { bottom: 12%; left: 15%; animation-delay: 2.8s; }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ======================================================
+   FEATURES GRID
+   ====================================================== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.feature-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--blue);
+}
+.feature-icon { font-size: 2rem; margin-bottom: 16px; }
+.feature-card h3 { font-size: 1.05rem; margin-bottom: 10px; color: var(--text); }
+.feature-card p { font-size: .9rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ======================================================
+   HOW IT WORKS — STEPS
+   ====================================================== */
+.steps-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.step {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  flex: 1;
+  min-width: 220px;
+  max-width: 300px;
+  text-align: center;
+  transition: box-shadow var(--transition);
+}
+.step:hover { box-shadow: var(--shadow); }
+.step-num {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--blue);
+  opacity: .25;
+  margin-bottom: 12px;
+}
+.step h3 { font-size: 1rem; margin-bottom: 8px; }
+.step p { font-size: .88rem; color: var(--text-muted); }
+.step-arrow { font-size: 1.8rem; color: var(--border); flex-shrink: 0; }
+
+/* ======================================================
+   TOOLS GRID
+   ====================================================== */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+.tool-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  transition: all var(--transition);
+  text-align: left;
+  cursor: pointer;
+}
+.tool-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--sky-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.tool-btn .tb-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+/* ======================================================
+   TESTIMONIALS
+   ====================================================== */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.testimonial-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.testimonial-text {
+  font-size: .95rem;
+  color: var(--text-mid);
+  line-height: 1.7;
+  font-style: italic;
+  flex: 1;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.author-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--sky));
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.testimonial-author strong { display: block; font-size: .9rem; }
+.testimonial-author span { font-size: .8rem; color: var(--text-muted); }
+
+/* ======================================================
+   CTA SECTION
+   ====================================================== */
+.cta-section .cta-box {
+  background: linear-gradient(135deg, var(--navy-mid) 0%, var(--blue) 100%);
+  border-radius: var(--radius-lg);
+  padding: 64px 48px;
+  text-align: center;
+  color: #fff;
+}
+.cta-box h2 { font-family: var(--font-display); font-size: 2.2rem; color: #fff; margin-bottom: 12px; }
+.cta-box p { font-size: 1.05rem; color: rgba(255,255,255,.75); margin-bottom: 32px; max-width: 460px; margin-left: auto; margin-right: auto; }
+.cta-box .btn-primary { background: #fff; color: var(--blue); box-shadow: none; }
+.cta-box .btn-primary:hover { background: var(--sky-light); }
+
+/* ======================================================
+   INNER HERO (Features, About, Contact)
+   ====================================================== */
+.inner-hero {
+  background: linear-gradient(180deg, var(--navy-mid) 0%, var(--blue) 100%);
+  padding: 80px 0 64px;
+  text-align: center;
+}
+.inner-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  color: #fff;
+  margin-bottom: 16px;
+}
+.inner-hero .section-eyebrow { color: var(--sky); }
+.inner-hero-desc { font-size: 1.05rem; color: rgba(255,255,255,.75); max-width: 520px; margin: 0 auto; }
+
+/* ======================================================
+   FEATURES FULL PAGE
+   ====================================================== */
+.features-full-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+.feature-full-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  gap: 20px;
+  transition: box-shadow var(--transition);
+}
+.feature-full-card:hover { box-shadow: var(--shadow); }
+.ffc-icon { font-size: 2rem; flex-shrink: 0; margin-top: 2px; }
+.ffc-body h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.ffc-body p { font-size: .9rem; color: var(--text-muted); margin-bottom: 14px; }
+.ffc-list { padding-left: 4px; display: flex; flex-direction: column; gap: 4px; }
+.ffc-list li { font-size: .85rem; color: var(--text-muted); padding-left: 16px; position: relative; }
+.ffc-list li::before { content: '·'; position: absolute; left: 0; color: var(--blue); font-weight: 700; }
+
+/* ======================================================
+   ABOUT PAGE
+   ====================================================== */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 48px;
+  align-items: start;
+}
+.about-text h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  margin-top: 36px;
+  color: var(--text);
+}
+.about-text h2:first-child { margin-top: 0; }
+.about-text p { font-size: .95rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 14px; }
+.about-benefits { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.about-benefits li { font-size: .92rem; color: var(--text-mid); }
+
+.about-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.about-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: box-shadow var(--transition);
+}
+.about-card:hover { box-shadow: var(--shadow); }
+.about-card-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.about-card h3 { font-size: .95rem; margin-bottom: 6px; }
+.about-card p { font-size: .85rem; color: var(--text-muted); }
+
+/* FAQ */
+.faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.faq-item {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+.faq-item.open { border-color: var(--blue); }
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.faq-arrow { transition: transform var(--transition); font-size: .9rem; color: var(--text-muted); }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  font-size: .9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  transition: max-height .3s ease, padding .3s ease;
+}
+.faq-item.open .faq-answer { max-height: 200px; padding: 0 20px 18px; }
+
+/* ======================================================
+   CONTACT PAGE
+   ====================================================== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 48px;
+  align-items: start;
+}
+.contact-info h2 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 16px; }
+.contact-info p { font-size: .95rem; color: var(--text-muted); margin-bottom: 28px; line-height: 1.7; }
+.contact-detail {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.cd-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--sky-light);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.contact-detail strong { display: block; font-size: .9rem; margin-bottom: 2px; }
+.contact-detail span { font-size: .85rem; color: var(--text-muted); }
+
+.contact-form-wrapper {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: .85rem; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: .9rem;
+  color: var(--text);
+  transition: border-color var(--transition);
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--blue); }
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.form-success {
+  text-align: center;
+  padding: 40px 20px;
+}
+.success-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.form-success h3 { margin-bottom: 8px; }
+.form-success p { font-size: .9rem; color: var(--text-muted); }
+
+/* ======================================================
+   CHATBOT LAYOUT
+   ====================================================== */
+.chatbot-layout {
+  display: flex;
+  height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+}
+
+/* Sidebar */
+.chat-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface2);
+  border-right: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  overflow-y: auto;
+  transition: transform .28s ease, width .28s ease;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo { font-size: .88rem; font-weight: 600; color: var(--text-mid); }
+.sidebar-close { background: none; border: none; color: var(--text-muted); font-size: .9rem; display: none; }
+
+.new-chat-btn {
+  width: 100%;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: .88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--transition);
+}
+.new-chat-btn:hover { background: var(--blue-hover); }
+.new-chat-btn span { font-size: 1.2rem; }
+
+.sidebar-section { display: flex; flex-direction: column; gap: 6px; }
+.sidebar-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-light); padding: 0 4px; }
+
+.chat-history-list { display: flex; flex-direction: column; gap: 2px; }
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+.history-item:hover, .history-item.active { background: var(--bg-alt); color: var(--text); }
+.history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.sidebar-tools-list { display: flex; flex-direction: column; gap: 2px; }
+.sidebar-tool-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: .82rem;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.sidebar-tool-item:hover { background: var(--bg-alt); color: var(--text); }
+
+/* Chat main */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg);
+}
+
+.chat-topbar {
+  height: 56px;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.sidebar-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+}
+.sidebar-toggle-btn:hover { color: var(--text); background: var(--bg-alt); }
+.chat-title-area { flex: 1; }
+.chat-heading { font-size: .95rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+.chat-status { font-size: .75rem; color: var(--text-muted); }
+.chat-topbar-actions { display: flex; align-items: center; gap: 6px; }
+
+.search-bar {
+  padding: 10px 20px;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  gap: 8px;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.search-bar input {
+  flex: 1;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-size: .88rem;
+  color: var(--text);
+  outline: none;
+}
+.search-bar input:focus { border-color: var(--blue); }
+.search-bar button { background: none; border: none; color: var(--text-muted); font-size: .9rem; }
+
+.icon-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+.icon-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--sky-light); }
+
+/* Messages */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Welcome screen */
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 0;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+.welcome-icon { font-size: 3rem; color: var(--blue); margin-bottom: 16px; }
+.chat-welcome h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.chat-welcome > p { font-size: .9rem; color: var(--text-muted); margin-bottom: 28px; }
+.prompts-label { font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-light); margin-bottom: 12px; align-self: flex-start; }
+.prompts-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+.prompt-chip {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-size: .82rem;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.prompt-chip:hover { border-color: var(--blue); color: var(--blue); background: var(--sky-light); }
+
+.tool-buttons-section { width: 100%; }
+.tool-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.chat-tool-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+}
+.chat-tool-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--sky-light); }
+
+/* Message bubbles */
+.message-row {
+  display: flex;
+  gap: 14px;
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+}
+.message-row.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.message-row.assistant .msg-avatar { background: linear-gradient(135deg, var(--blue), var(--sky)); color: #fff; }
+.message-row.user .msg-avatar { background: var(--bg-alt); color: var(--text-mid); border: 1.5px solid var(--border); }
+
+.msg-bubble {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: .9rem;
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 75%;
+  position: relative;
+}
+.message-row.user .msg-bubble {
+  background: var(--blue);
+  color: #fff;
+  border-color: transparent;
+}
+.msg-bubble.loading { display: flex; align-items: center; gap: 6px; }
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: typing 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(1); opacity: .4; }
+  40% { transform: scale(1.3); opacity: 1; }
+}
+
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: .74rem;
+  color: var(--text-light);
+}
+.message-row.user .msg-meta { flex-direction: row-reverse; }
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: .8rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all var(--transition);
+  opacity: 0;
+}
+.message-row:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { color: var(--blue); background: var(--sky-light); }
+
+/* Markdown rendered content */
+.msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 12px 0 8px; font-size: 1rem; }
+.msg-bubble h1 { font-size: 1.05rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.msg-bubble p { margin-bottom: 10px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 10px; }
+.msg-bubble li { margin-bottom: 4px; }
+.msg-bubble strong { font-weight: 700; }
+.msg-bubble em { font-style: italic; }
+.msg-bubble code {
+  background: var(--bg-alt);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: .85em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: var(--blue);
+}
+.msg-bubble pre {
+  background: var(--bg-alt);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+.msg-bubble pre code { background: none; padding: 0; color: var(--text); }
+.message-row.user .msg-bubble code,
+.message-row.user .msg-bubble pre { background: rgba(255,255,255,.15); color: #fff; }
+.message-row.user .msg-bubble strong { color: #fff; }
+.message-row.user .msg-meta .copy-btn { display: none; }
+
+/* Input area */
+.chat-input-area {
+  padding: 16px 20px;
+  border-top: 1.5px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px 10px 8px 16px;
+  transition: border-color var(--transition);
+}
+.input-wrapper:focus-within { border-color: var(--blue); }
+.chat-textarea {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: .92rem;
+  color: var(--text);
+  resize: none;
+  line-height: 1.5;
+  min-height: 22px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+.chat-textarea::placeholder { color: var(--text-light); }
+.input-actions { display: flex; align-items: center; gap: 4px; }
+.icon-btn-sm {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: .9rem;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color var(--transition), background var(--transition);
+}
+.icon-btn-sm:hover { color: var(--text-muted); background: var(--bg-alt); }
+.send-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), transform var(--transition);
+  flex-shrink: 0;
+}
+.send-btn:hover { background: var(--blue-hover); transform: scale(1.05); }
+.send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+.input-disclaimer { font-size: .72rem; color: var(--text-light); text-align: center; margin-top: 8px; }
+
+/* ======================================================
+   FOOTER
+   ====================================================== */
+.footer {
+  background: var(--navy-mid);
+  color: rgba(255,255,255,.7);
+  padding: 56px 0 0;
+}
+[data-theme="dark"] .footer { background: #080E1A; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.footer-brand .footer-logo { display: block; font-size: 1.1rem; color: #fff; margin-bottom: 12px; }
+.footer-brand p { font-size: .85rem; line-height: 1.7; }
+.footer-links strong { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 14px; }
+.footer-links ul { display: flex; flex-direction: column; gap: 8px; }
+.footer-links a { font-size: .88rem; color: rgba(255,255,255,.65); transition: color var(--transition); }
+.footer-links a:hover { color: #fff; }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  font-size: .8rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.footer-note { color: rgba(255,255,255,.35); }
+
+/* ======================================================
+   TOAST
+   ====================================================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--navy-mid);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 24px;
+  font-size: .88rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: all .3s ease;
+  z-index: 500;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ======================================================
+   PAGE TRANSITIONS
+   ====================================================== */
+.page {
+  display: none;
+  animation: fadeSlide .25s ease;
+}
+.page.active { display: block; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======================================================
+   ANIMATION — SCROLL REVEAL
+   ====================================================== */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+[data-animate].visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ======================================================
+   HIGHLIGHT (search)
+   ====================================================== */
+mark.search-highlight {
+  background: rgba(56,189,248,.4);
+  color: inherit;
+  border-radius: 2px;
+}
+
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
+
+/* Tablet */
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; text-align: center; padding: 60px 24px; min-height: auto; }
+  .hero-subtitle { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .hero-visual { display: none; }
+  .about-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+
+/* Small tablet / large mobile */
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .nav-cta { display: none; }
+
+  .section { padding: 52px 0; }
+  .steps-row { flex-direction: column; align-items: stretch; }
+  .step-arrow { display: none; }
+  .step { max-width: 100%; }
+  .cta-section .cta-box { padding: 40px 24px; }
+  .cta-box h2 { font-size: 1.6rem; }
+
+  .chat-sidebar {
+    position: fixed;
+    top: var(--nav-h);
+    left: -280px;
+    width: 260px;
+    height: calc(100vh - var(--nav-h));
+    z-index: 150;
+    transition: left .28s ease;
+    box-shadow: var(--shadow-lg);
+  }
+  .chat-sidebar.open { left: 0; }
+  .sidebar-close { display: block; }
+
+  .features-full-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+  .hero-title { font-size: 2.5rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions button { width: 100%; justify-content: center; }
+  .features-grid { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr 1fr; }
+  .tool-buttons-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .msg-bubble { max-width: 90%; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===================== NAVIGATION ===================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a class="nav-logo" href="#home" onclick="showPage('home')">
+      <span class="logo-icon">◈</span>
+      <span class="logo-text">Discourse<strong>Helper</strong></span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" onclick="showPage('home')" data-page="home" class="nav-link active">Home</a></li>
+      <li><a href="#" onclick="showPage('chatbot')" data-page="chatbot" class="nav-link">Chatbot</a></li>
+      <li><a href="#" onclick="showPage('features')" data-page="features" class="nav-link">Features</a></li>
+      <li><a href="#" onclick="showPage('about')" data-page="about" class="nav-link">About</a></li>
+      <li><a href="#" onclick="showPage('contact')" data-page="contact" class="nav-link">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Dark mode toggle -->
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="theme-icon">☀️</span>
+      </button>
+      <button class="btn-primary nav-cta" onclick="showPage('chatbot')">Try Chatbot</button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile nav overlay -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <ul>
+    <li><a href="#" onclick="showPage('home'); closeMobileNav()">Home</a></li>
+    <li><a href="#" onclick="showPage('chatbot'); closeMobileNav()">Chatbot</a></li>
+    <li><a href="#" onclick="showPage('features'); closeMobileNav()">Features</a></li>
+    <li><a href="#" onclick="showPage('about'); closeMobileNav()">About</a></li>
+    <li><a href="#" onclick="showPage('contact'); closeMobileNav()">Contact</a></li>
+  </ul>
+</div>
+
+<!-- ===================== PAGES ===================== -->
+<main id="app">
+
+  <!-- ============ HOME PAGE ============ -->
+  <div id="page-home" class="page active">
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-bg">
+        <!-- Animated discourse bubbles (signature element) -->
+        <canvas id="heroCanvas"></canvas>
+      </div>
+      <div class="hero-content">
+        <span class="hero-eyebrow">Powered by AI · Built for Scholars</span>
+        <h1 class="hero-title">
+          <em>Discourse</em><br>Helper
+        </h1>
+        <p class="hero-subtitle">
+          Your AI assistant for discourse analysis and communication studies. Analyze texts, speeches, media, and conversations with depth and precision.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary btn-lg" onclick="showPage('chatbot')">
+            <span>Try Chatbot</span> →
+          </button>
+          <button class="btn-ghost btn-lg" onclick="scrollToSection('features-home')">
+            Learn More
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>10+</strong><span>Analysis Types</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><strong>AI</strong><span>Powered Engine</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><strong>Free</strong><span>To Use</span></div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="floating-card fc1">
+          <span class="fc-icon">🔍</span>
+          <span>Critical Discourse Analysis</span>
+        </div>
+        <div class="floating-card fc2">
+          <span class="fc-icon">💬</span>
+          <span>Speech Acts Detected</span>
+        </div>
+        <div class="floating-card fc3">
+          <span class="fc-icon">📰</span>
+          <span>Media Framing Identified</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Overview -->
+    <section class="section" id="features-home">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">What We Offer</span>
+          <h2 class="section-title">Every Tool a Discourse Scholar Needs</h2>
+          <p class="section-desc">From pragmatics to CDA, Discourse Helper covers the full spectrum of communication analysis.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">🔬</div>
+            <h3>Critical Discourse Analysis</h3>
+            <p>Uncover power relations, ideology, and social structures embedded in texts and speech.</p>
+          </div>
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">🗣️</div>
+            <h3>Pragmatics &amp; Speech Acts</h3>
+            <p>Identify illocutionary forces, implicatures, and politeness strategies in real conversations.</p>
+          </div>
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">📺</div>
+            <h3>Media Text Analysis</h3>
+            <p>Examine framing, agenda-setting, and persuasion in news, advertising, and social media.</p>
+          </div>
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">📖</div>
+            <h3>Narrative Structure</h3>
+            <p>Trace story arcs, character positioning, and ideological framing in narrative texts.</p>
+          </div>
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">🤝</div>
+            <h3>Conversation Analysis</h3>
+            <p>Analyze turn-taking, adjacency pairs, and interactional sequences in dialogue.</p>
+          </div>
+          <div class="feature-card" data-animate>
+            <div class="feature-icon">✍️</div>
+            <h3>Academic Writing Support</h3>
+            <p>Get guidance on discourse-focused academic writing, citations, and argumentation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section section-alt" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">How It Works</span>
+          <h2 class="section-title">Three Steps to Deeper Analysis</h2>
+        </div>
+        <div class="steps-row">
+          <div class="step" data-animate>
+            <div class="step-num">01</div>
+            <h3>Paste Your Text</h3>
+            <p>Drop in any text — a news article, speech transcript, advertisement, or conversation excerpt.</p>
+          </div>
+          <div class="step-arrow" aria-hidden="true">→</div>
+          <div class="step" data-animate>
+            <div class="step-num">02</div>
+            <h3>Choose an Analysis</h3>
+            <p>Select from 10 specialized analysis modes or ask a free-form question about the text.</p>
+          </div>
+          <div class="step-arrow" aria-hidden="true">→</div>
+          <div class="step" data-animate>
+            <div class="step-num">03</div>
+            <h3>Get Insight</h3>
+            <p>Receive detailed, academically-grounded analysis with key findings, terminology, and examples.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Tools Dashboard -->
+    <section class="section" id="tools-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Quick Access</span>
+          <h2 class="section-title">10 Analysis Workflows</h2>
+          <p class="section-desc">Jump straight into a specialized analysis mode.</p>
+        </div>
+        <div class="tools-grid" id="toolsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section section-alt" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Voices</span>
+          <h2 class="section-title">What Scholars Say</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card" data-animate>
+            <p class="testimonial-text">"Discourse Helper completely changed how I prepare my CDA assignments. The AI breaks down ideological structures in a way that's genuinely illuminating."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">SA</div>
+              <div>
+                <strong>Sara A.</strong>
+                <span>MA Linguistics, University of Jordan</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card" data-animate>
+            <p class="testimonial-text">"I use it to prepare discourse analysis examples for my students. It saves hours of preparation and the explanations are always clear and accurate."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">MK</div>
+              <div>
+                <strong>Dr. M. Khalil</strong>
+                <span>Lecturer in Applied Linguistics</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card" data-animate>
+            <p class="testimonial-text">"As a journalism student, the media framing and persuasion analysis tools are invaluable. I can now read news with a genuinely critical eye."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">NR</div>
+              <div>
+                <strong>Nadia R.</strong>
+                <span>BA Media &amp; Communication</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box" data-animate>
+          <h2>Ready to Analyze?</h2>
+          <p>Start with any text — no account required. Your AI discourse analyst is ready.</p>
+          <button class="btn-primary btn-lg" onclick="showPage('chatbot')">Open the Chatbot →</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /page-home -->
+
+  <!-- ============ CHATBOT PAGE ============ -->
+  <div id="page-chatbot" class="page">
+    <div class="chatbot-layout">
+
+      <!-- Sidebar -->
+      <aside class="chat-sidebar" id="chatSidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-logo">◈ Discourse Helper</span>
+          <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Close sidebar">✕</button>
+        </div>
+
+        <button class="new-chat-btn" onclick="newChat()">
+          <span>+</span> New Chat
+        </button>
+
+        <div class="sidebar-section">
+          <span class="sidebar-label">Recent Chats</span>
+          <ul class="chat-history-list" id="chatHistoryList">
+            <li class="history-item active" data-id="current">
+              <span class="history-icon">💬</span>
+              <span class="history-title">Current Session</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <span class="sidebar-label">Quick Tools</span>
+          <ul class="sidebar-tools-list" id="sidebarToolsList">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main chat area -->
+      <div class="chat-main">
+        <!-- Top bar -->
+        <div class="chat-topbar">
+          <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+          <div class="chat-title-area">
+            <h1 class="chat-heading">Discourse Analysis Chat</h1>
+            <span class="chat-status" id="chatStatus">Ready</span>
+          </div>
+          <div class="chat-topbar-actions">
+            <button class="icon-btn" onclick="searchConversation()" title="Search conversation">🔍</button>
+            <button class="icon-btn" onclick="exportChat()" title="Export chat">⬇</button>
+            <button class="icon-btn" onclick="clearChat()" title="Clear chat">🗑</button>
+          </div>
+        </div>
+
+        <!-- Search bar (hidden by default) -->
+        <div class="search-bar" id="searchBar" style="display:none">
+          <input type="text" id="searchInput" placeholder="Search conversation…" oninput="highlightSearch(this.value)" />
+          <button onclick="closeSearch()">✕</button>
+        </div>
+
+        <!-- Messages window -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Welcome screen -->
+          <div class="chat-welcome" id="chatWelcome">
+            <div class="welcome-icon">◈</div>
+            <h2>Welcome to Discourse Helper</h2>
+            <p>Paste any text and ask me to analyze it — or choose a quick analysis below.</p>
+
+            <!-- Suggested prompts -->
+            <div class="suggested-prompts">
+              <p class="prompts-label">Suggested prompts</p>
+              <div class="prompts-grid">
+                <button class="prompt-chip" onclick="usePrompt(this)">Analyze this news article for framing</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Identify discourse strategies in this speech</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Explain the speech acts in this conversation</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Detect persuasive techniques used here</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Analyze power relations in this text</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Examine the ideology embedded in this passage</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Identify discourse markers in this extract</button>
+                <button class="prompt-chip" onclick="usePrompt(this)">Analyze politeness strategies used</button>
+              </div>
+            </div>
+
+            <!-- 10 Tool Buttons -->
+            <div class="tool-buttons-section">
+              <p class="prompts-label">Quick Analysis Workflows</p>
+              <div class="tool-buttons-grid" id="chatToolButtons">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="chat-input-area">
+          <div class="input-wrapper">
+            <textarea
+              id="chatInput"
+              class="chat-textarea"
+              placeholder="Ask about discourse, or paste a text to analyze…"
+              rows="1"
+              onkeydown="handleInputKey(event)"
+              oninput="autoResize(this)"
+            ></textarea>
+            <div class="input-actions">
+              <button class="icon-btn-sm" onclick="clearInput()" title="Clear input">✕</button>
+              <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send message">
+                <span>↑</span>
+              </button>
+            </div>
+          </div>
+          <p class="input-disclaimer">Discourse Helper uses AI. Always verify academic claims with primary sources.</p>
+        </div>
+      </div><!-- /chat-main -->
+
+    </div><!-- /chatbot-layout -->
+  </div><!-- /page-chatbot -->
+
+  <!-- ============ FEATURES PAGE ============ -->
+  <div id="page-features" class="page">
+    <section class="inner-hero">
+      <div class="container">
+        <span class="section-eyebrow">What's Inside</span>
+        <h1 class="inner-hero-title">Features</h1>
+        <p class="inner-hero-desc">A complete toolkit for discourse analysis, from beginner exercises to advanced research.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="features-full-grid">
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">🔬</div>
+            <div class="ffc-body">
+              <h3>Discourse Analysis</h3>
+              <p>Examine how language constructs meaning beyond sentence level. Identify cohesion, coherence, register, and genre conventions in any text type.</p>
+              <ul class="ffc-list">
+                <li>Cohesion and coherence detection</li>
+                <li>Register and genre analysis</li>
+                <li>Thematic structure mapping</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">💬</div>
+            <div class="ffc-body">
+              <h3>Pragmatics Support</h3>
+              <p>Go beyond literal meaning. Analyze implicature, presupposition, relevance, and context-dependent interpretation guided by Grice, Sperber &amp; Wilson.</p>
+              <ul class="ffc-list">
+                <li>Gricean maxims analysis</li>
+                <li>Presupposition identification</li>
+                <li>Conversational implicature</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">⚖️</div>
+            <div class="ffc-body">
+              <h3>Critical Discourse Analysis</h3>
+              <p>Expose ideological assumptions, power asymmetries, and social inequalities through language. Frameworks from Fairclough, Van Dijk, and Wodak.</p>
+              <ul class="ffc-list">
+                <li>Ideological critique</li>
+                <li>Power relation mapping</li>
+                <li>Intertextuality tracing</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">📺</div>
+            <div class="ffc-body">
+              <h3>Media Analysis</h3>
+              <p>Deconstruct how media texts construct reality. Analyze framing, sourcing practices, representation, and agenda-setting in print and digital media.</p>
+              <ul class="ffc-list">
+                <li>News framing analysis</li>
+                <li>Source credibility check</li>
+                <li>Visual-verbal semiosis</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">🤝</div>
+            <div class="ffc-body">
+              <h3>Conversation Analysis</h3>
+              <p>Study the sequential organization of talk. Identify turn-taking mechanisms, repair sequences, adjacency pairs, and institutional talk patterns.</p>
+              <ul class="ffc-list">
+                <li>Turn-taking mechanics</li>
+                <li>Adjacency pair identification</li>
+                <li>Repair and correction analysis</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">🔤</div>
+            <div class="ffc-body">
+              <h3>Linguistic Feature Detection</h3>
+              <p>Automatically identify key linguistic devices: nominalization, passive voice, hedging, intensifiers, modality, and evaluative language.</p>
+              <ul class="ffc-list">
+                <li>Modality and hedging</li>
+                <li>Nominalization patterns</li>
+                <li>Evaluative lexis</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">🎓</div>
+            <div class="ffc-body">
+              <h3>Research Assistance</h3>
+              <p>Get help designing discourse studies, choosing frameworks, interpreting data, and connecting findings to existing literature.</p>
+              <ul class="ffc-list">
+                <li>Framework selection guidance</li>
+                <li>Data interpretation support</li>
+                <li>Literature connection</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">📚</div>
+            <div class="ffc-body">
+              <h3>Educational Support</h3>
+              <p>Perfect for classroom use. Generate exercises, model analyses, explanations of key concepts, and exam preparation materials.</p>
+              <ul class="ffc-list">
+                <li>Concept explainers</li>
+                <li>Model answer generation</li>
+                <li>Exam preparation</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">📝</div>
+            <div class="ffc-body">
+              <h3>Text Summarization</h3>
+              <p>Generate concise, discourse-aware summaries that preserve the text's rhetorical structure and key argumentative moves.</p>
+              <ul class="ffc-list">
+                <li>Rhetorical structure preservation</li>
+                <li>Key argument extraction</li>
+                <li>Discourse-aware condensation</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="feature-full-card" data-animate>
+            <div class="ffc-icon">✍️</div>
+            <div class="ffc-body">
+              <h3>Academic Writing Guidance</h3>
+              <p>Improve your academic writing with feedback on argumentation, cohesion, academic register, and disciplinary discourse conventions.</p>
+              <ul class="ffc-list">
+                <li>Academic register review</li>
+                <li>Argument structure feedback</li>
+                <li>Disciplinary conventions</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div><!-- /page-features -->
+
+  <!-- ============ ABOUT PAGE ============ -->
+  <div id="page-about" class="page">
+    <section class="inner-hero">
+      <div class="container">
+        <span class="section-eyebrow">Our Mission</span>
+        <h1 class="inner-hero-title">About Discourse Helper</h1>
+        <p class="inner-hero-desc">Making advanced discourse analysis accessible to every student, teacher, and researcher.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container about-grid">
+        <div class="about-text">
+          <h2>What Is Discourse Analysis?</h2>
+          <p>Discourse analysis is the study of language in use — examining how meaning is constructed not just in individual sentences but across entire texts, conversations, and social contexts. It investigates how language reflects and shapes power, identity, ideology, and social relations.</p>
+          <p>From a political speech to a social media post, from a job interview to a news headline, discourse analysis reveals the hidden structures that govern communication and shape how we understand the world.</p>
+
+          <h2>How AI Assists Learning</h2>
+          <p>Large language models have been trained on vast linguistic corpora, making them remarkably capable discourse partners. Discourse Helper applies AI to provide instant, academically-grounded analysis guided by established frameworks from Halliday, Fairclough, Van Dijk, Sacks, Grice, and others.</p>
+          <p>The AI does not replace critical thinking — it scaffolds it. By providing initial analysis, flagging key features, and explaining theoretical concepts, Discourse Helper helps users develop their own analytical skills more rapidly.</p>
+
+          <h2>Benefits for Students &amp; Researchers</h2>
+          <ul class="about-benefits">
+            <li>✔ Immediate feedback on analytical interpretations</li>
+            <li>✔ Access to multiple theoretical frameworks in one place</li>
+            <li>✔ Practice material for exams and assignments</li>
+            <li>✔ Support for non-native English speakers engaging with complex theory</li>
+            <li>✔ Bridge between raw text and academic writing</li>
+            <li>✔ 24/7 availability for self-directed study</li>
+          </ul>
+        </div>
+        <div class="about-sidebar">
+          <div class="about-card" data-animate>
+            <div class="about-card-icon">📐</div>
+            <h3>Theoretical Grounding</h3>
+            <p>Built on established frameworks: SFL, CDA, CA, Pragmatics, and Multimodal Discourse Analysis.</p>
+          </div>
+          <div class="about-card" data-animate>
+            <div class="about-card-icon">🌐</div>
+            <h3>Multilingual Friendly</h3>
+            <p>Analyze texts in English and receive explanations tailored to non-native scholars.</p>
+          </div>
+          <div class="about-card" data-animate>
+            <div class="about-card-icon">🔒</div>
+            <h3>Privacy First</h3>
+            <p>Your texts are not stored. Each session is independent and confidential.</p>
+          </div>
+          <div class="about-card" data-animate>
+            <div class="about-card-icon">🆓</div>
+            <h3>Free to Use</h3>
+            <p>No subscription, no login required. Open access for all learners.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section section-alt" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">FAQ</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">What types of texts can Discourse Helper analyze? <span class="faq-arrow">▾</span></div>
+            <div class="faq-answer">Any written text: news articles, academic papers, speeches, social media posts, advertisements, interviews, political documents, literary texts, and conversational transcripts.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Is the AI analysis academically reliable? <span class="faq-arrow">▾</span></div>
+            <div class="faq-answer">The AI provides analysis grounded in established linguistic frameworks and is a valuable starting point. However, all academic work should be verified against primary sources and peer-reviewed literature. Use it as a scaffold, not a final authority.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Can I use it for my university assignments? <span class="faq-arrow">▾</span></div>
+            <div class="faq-answer">Yes, as a research and learning tool. Always disclose AI use according to your institution's academic integrity policy, and ensure all submitted work reflects your own analysis and understanding.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Which discourse analysis frameworks are supported? <span class="faq-arrow">▾</span></div>
+            <div class="faq-answer">Hallidayan SFL, Fairclough's CDA, Van Dijk's socio-cognitive CDA, Wodak's Discourse-Historical Approach, Gricean Pragmatics, Relevance Theory, Conversation Analysis (Sacks/Schegloff), and Framing Analysis.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">How do the 10 analysis workflows work? <span class="faq-arrow">▾</span></div>
+            <div class="faq-answer">Each workflow opens the chatbot pre-loaded with a specialized system prompt and starter message for that analysis type. You paste your text and get a structured analysis focused on that framework.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /page-about -->
+
+  <!-- ============ CONTACT PAGE ============ -->
+  <div id="page-contact" class="page">
+    <section class="inner-hero">
+      <div class="container">
+        <span class="section-eyebrow">Reach Out</span>
+        <h1 class="inner-hero-title">Contact Us</h1>
+        <p class="inner-hero-desc">Questions, feedback, or collaboration ideas? We'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-grid">
+        <div class="contact-info">
+          <h2>Get in Touch</h2>
+          <p>Whether you're a student with a question, a teacher wanting to use Discourse Helper in your classroom, or a researcher interested in collaboration — reach out.</p>
+          <div class="contact-detail">
+            <span class="cd-icon">✉</span>
+            <div>
+              <strong>Email</strong>
+              <span>hello@discoursehelper.ai</span>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <span class="cd-icon">🎓</span>
+            <div>
+              <strong>Educational Partnerships</strong>
+              <span>edu@discoursehelper.ai</span>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <span class="cd-icon">🌐</span>
+            <div>
+              <strong>For Researchers</strong>
+              <span>research@discoursehelper.ai</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrapper">
+          <form class="contact-form" id="contactForm" onsubmit="submitContact(event)">
+            <div class="form-group">
+              <label for="contactName">Your Name</label>
+              <input type="text" id="contactName" placeholder="Dr. Jane Smith" required />
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email Address</label>
+              <input type="email" id="contactEmail" placeholder="jane@university.edu" required />
+            </div>
+            <div class="form-group">
+              <label for="contactSubject">Subject</label>
+              <select id="contactSubject">
+                <option value="">Select a topic…</option>
+                <option>General Question</option>
+                <option>Classroom Use</option>
+                <option>Research Collaboration</option>
+                <option>Technical Issue</option>
+                <option>Feature Request</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" rows="5" placeholder="Tell us how we can help…" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary btn-full">Send Message →</button>
+          </form>
+          <div class="form-success" id="formSuccess" style="display:none">
+            <div class="success-icon">✓</div>
+            <h3>Message Sent!</h3>
+            <p>Thank you for reaching out. We'll be in touch within 2 business days.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /page-contact -->
+
+</main><!-- /app -->
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo">◈ Discourse<strong>Helper</strong></span>
+        <p>AI-powered discourse analysis for students, researchers, and educators.</p>
+      </div>
+      <div class="footer-links">
+        <strong>Navigate</strong>
+        <ul>
+          <li><a href="#" onclick="showPage('home')">Home</a></li>
+          <li><a href="#" onclick="showPage('chatbot')">Chatbot</a></li>
+          <li><a href="#" onclick="showPage('features')">Features</a></li>
+          <li><a href="#" onclick="showPage('about')">About</a></li>
+          <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <strong>Analysis Types</strong>
+        <ul>
+          <li><a href="#" onclick="showPage('chatbot'); loadTool(0)">Discourse Markers</a></li>
+          <li><a href="#" onclick="showPage('chatbot'); loadTool(1)">Speech Acts</a></li>
+          <li><a href="#" onclick="showPage('chatbot'); loadTool(2)">Pragmatics</a></li>
+          <li><a href="#" onclick="showPage('chatbot'); loadTool(3)">CDA Analysis</a></li>
+          <li><a href="#" onclick="showPage('chatbot'); loadTool(4)">Framing Analysis</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <strong>Resources</strong>
+        <ul>
+          <li><a href="#" onclick="showPage('about')">FAQ</a></li>
+          <li><a href="#" onclick="showPage('features')">All Features</a></li>
+          <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Discourse Helper. Built for education.</span>
+      <span class="footer-note">AI responses are for educational purposes. Always verify with academic sources.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   DISCOURSE HELPER — APP LOGIC
+   Page routing, chatbot engine, tools, theme, contact form,
+   and a placeholder API layer ready to connect to n8n.
+   ============================================================ */
+
+/* ---------------------------------------------------------
+   1. CONFIG — n8n / API integration point
+   ---------------------------------------------------------
+   Replace API_ENDPOINT with your real n8n webhook URL.
+   Expected request body:  { message: string, sessionId: string }
+   Expected response body: { reply: string }  (markdown allowed)
+--------------------------------------------------------- */
+const API_CONFIG = {
+  endpoint: "/api/chat", // placeholder — point this at your n8n webhook in production
+  useMock: true          // set to false once a real n8n endpoint is connected
+};
+
+/* ---------------------------------------------------------
+   2. STATE
+--------------------------------------------------------- */
+let sessionId = getOrCreateSessionId();
+let chatHistory = [];      // [{role, content, timestamp}]
+let isSending = false;
+
+/* ---------------------------------------------------------
+   3. THE 10 ANALYSIS TOOLS (shared across Home, Chatbot, Footer)
+--------------------------------------------------------- */
+const TOOLS = [
+  { icon: "🔖", name: "Discourse Markers", prompt: "Identify and explain the discourse markers used in this text, and describe what function each one performs:\n\n" },
+  { icon: "🗣️", name: "Speech Acts", prompt: "Analyze the speech acts in this text using speech act theory (Austin/Searle). Identify locutionary, illocutionary, and perlocutionary acts:\n\n" },
+  { icon: "💬", name: "Pragmatics", prompt: "Provide a pragmatic analysis of this text — implicature, presupposition, deixis, and context-dependent meaning:\n\n" },
+  { icon: "⚖️", name: "CDA Analysis", prompt: "Conduct a Critical Discourse Analysis of this text. Focus on ideology, power relations, and social structures it reflects or reproduces:\n\n" },
+  { icon: "📰", name: "Framing Analysis", prompt: "Analyze how this media text frames the issue, actors, and events. Identify framing devices and their likely effects on readers:\n\n" },
+  { icon: "📖", name: "Narrative Analysis", prompt: "Analyze the narrative structure of this text — plot, characters, point of view, and how the story is positioned ideologically:\n\n" },
+  { icon: "🎯", name: "Persuasion Analysis", prompt: "Identify the persuasive techniques used in this text (ethos, pathos, logos, rhetorical devices) and explain how they work:\n\n" },
+  { icon: "📺", name: "Media Analysis", prompt: "Analyze this media text's sourcing, representation choices, and agenda-setting strategies:\n\n" },
+  { icon: "🤝", name: "Conversation Analysis", prompt: "Apply Conversation Analysis to this transcript — turn-taking, adjacency pairs, and repair sequences:\n\n" },
+  { icon: "🔤", name: "Linguistic Features", prompt: "Identify key linguistic features in this text: modality, nominalization, passive voice, hedging, and evaluative language:\n\n" }
+];
+
+/* ---------------------------------------------------------
+   4. INITIALIZATION
+--------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  renderToolGrids();
+  initScrollAnimations();
+  initHeroCanvas();
+  loadChatFromStorage();
+  window.addEventListener("resize", initHeroCanvas);
+});
+
+/* ===========================================================
+   PAGE ROUTING
+=========================================================== */
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const target = document.getElementById("page-" + pageId);
+  if (target) target.classList.add("active");
+
+  document.querySelectorAll(".nav-link").forEach(l => {
+    l.classList.toggle("active", l.dataset.page === pageId);
+  });
+
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+
+  if (pageId === "chatbot") {
+    setTimeout(() => document.getElementById("chatInput")?.focus(), 200);
+  }
+  return false; // prevent default anchor jump
+}
+
+function scrollToSection(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+}
+
+/* ===========================================================
+   MOBILE NAV
+=========================================================== */
+document.getElementById("hamburger")?.addEventListener("click", () => {
+  document.getElementById("mobileNav").classList.add("open");
+  document.getElementById("mobileNavOverlay").style.display = "block";
+});
+function closeMobileNav() {
+  document.getElementById("mobileNav").classList.remove("open");
+  document.getElementById("mobileNavOverlay").style.display = "none";
+}
+
+/* ===========================================================
+   DARK MODE
+=========================================================== */
+function initTheme() {
+  const saved = localStorage.getItem("dh-theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  updateThemeIcon(saved);
+}
+document.getElementById("themeToggle")?.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("dh-theme", next);
+  updateThemeIcon(next);
+});
+function updateThemeIcon(theme) {
+  const icon = document.querySelector(".theme-icon");
+  if (icon) icon.textContent = theme === "dark" ? "🌙" : "☀️";
+}
+
+/* ===========================================================
+   SCROLL REVEAL ANIMATIONS
+=========================================================== */
+function initScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll("[data-animate]").forEach(el => observer.observe(el));
+}
+
+/* ===========================================================
+   HERO CANVAS — animated discourse-bubble network (signature visual)
+=========================================================== */
+function initHeroCanvas() {
+  const canvas = document.getElementById("heroCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const parent = canvas.parentElement;
+  canvas.width = parent.offsetWidth;
+  canvas.height = parent.offsetHeight;
+
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const dotColor = isDark ? "56,189,248" : "37,99,235";
+
+  const nodes = Array.from({ length: 22 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    r: Math.random() * 2 + 1.5
+  }));
+
+  let rafId;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+      if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+    });
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.strokeStyle = `rgba(${dotColor},${0.12 * (1 - dist / 150)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n => {
+      ctx.fillStyle = `rgba(${dotColor},0.5)`;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    rafId = requestAnimationFrame(draw);
+  }
+  if (canvas._raf) cancelAnimationFrame(canvas._raf);
+  draw();
+  canvas._raf = rafId;
+}
+
+/* ===========================================================
+   RENDER TOOL GRIDS (home dashboard, chat welcome, sidebar)
+=========================================================== */
+function renderToolGrids() {
+  // Home page dashboard
+  const homeGrid = document.getElementById("toolsGrid");
+  if (homeGrid) {
+    homeGrid.innerHTML = TOOLS.map((t, i) => `
+      <button class="tool-btn" onclick="showPage('chatbot'); loadTool(${i})">
+        <span class="tb-icon">${t.icon}</span>
+        <span>${t.name}</span>
+      </button>
+    `).join("");
+  }
+
+  // Chat welcome screen grid
+  const chatGrid = document.getElementById("chatToolButtons");
+  if (chatGrid) {
+    chatGrid.innerHTML = TOOLS.map((t, i) => `
+      <button class="chat-tool-btn" onclick="loadTool(${i})">
+        <span class="tb-icon">${t.icon}</span>
+        <span>${t.name}</span>
+      </button>
+    `).join("");
+  }
+
+  // Sidebar quick tools list
+  const sidebarList = document.getElementById("sidebarToolsList");
+  if (sidebarList) {
+    sidebarList.innerHTML = TOOLS.map((t, i) => `
+      <li>
+        <button class="sidebar-tool-item" onclick="loadTool(${i})">
+          <span>${t.icon}</span><span>${t.name}</span>
+        </button>
+      </li>
+    `).join("");
+  }
+}
+
+/* Load a tool's starter prompt into the chat input */
+function loadTool(index) {
+  const tool = TOOLS[index];
+  if (!tool) return;
+  const input = document.getElementById("chatInput");
+  input.value = tool.prompt;
+  autoResize(input);
+  input.focus();
+  showToast(`${tool.name} workflow loaded — paste your text and send`);
+}
+
+/* Suggested prompt chips */
+function usePrompt(btn) {
+  const input = document.getElementById("chatInput");
+  input.value = btn.textContent + ":\n\n";
+  autoResize(input);
+  input.focus();
+}
+
+/* ===========================================================
+   SIDEBAR TOGGLE (mobile)
+=========================================================== */
+function toggleSidebar() {
+  document.getElementById("chatSidebar").classList.toggle("open");
+}
+
+/* ===========================================================
+   CHAT INPUT HANDLING
+=========================================================== */
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 160) + "px";
+}
+
+function handleInputKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function clearInput() {
+  const input = document.getElementById("chatInput");
+  input.value = "";
+  autoResize(input);
+  input.focus();
+}
+
+/* ===========================================================
+   CHAT CORE LOGIC
+=========================================================== */
+function newChat() {
+  if (chatHistory.length && !confirm("Start a new chat? Current conversation will be cleared from view.")) return;
+  chatHistory = [];
+  sessionId = getOrCreateSessionId(true);
+  document.getElementById("chatMessages").innerHTML = "";
+  document.getElementById("chatMessages").appendChild(document.getElementById("chatWelcome"));
+  document.getElementById("chatWelcome").style.display = "flex";
+  saveChatToStorage();
+  showToast("New chat started");
+}
+
+function clearChat() {
+  if (!confirm("Clear this conversation?")) return;
+  newChat();
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text || isSending) return;
+
+  hideWelcome();
+  appendMessage("user", text);
+  chatHistory.push({ role: "user", content: text, timestamp: Date.now() });
+  saveChatToStorage();
+
+  input.value = "";
+  autoResize(input);
+  isSending = true;
+  setChatStatus("Thinking…");
+  document.getElementById("sendBtn").disabled = true;
+
+  const typingEl = appendTypingIndicator();
+
+  try {
+    const reply = await callChatAPI(text, sessionId);
+    typingEl.remove();
+    appendMessage("assistant", reply);
+    chatHistory.push({ role: "assistant", content: reply, timestamp: Date.now() });
+    saveChatToStorage();
+  } catch (err) {
+    typingEl.remove();
+    appendMessage("assistant", "⚠️ **Connection error.** I couldn't reach the analysis engine. Please check your connection and try again.\n\n*(" + (err.message || "Unknown error") + ")*", true);
+  } finally {
+    isSending = false;
+    setChatStatus("Ready");
+    document.getElementById("sendBtn").disabled = false;
+  }
+}
+
+function setChatStatus(text) {
+  const el = document.getElementById("chatStatus");
+  if (el) el.textContent = text;
+}
+
+function hideWelcome() {
+  const welcome = document.getElementById("chatWelcome");
+  if (welcome) welcome.style.display = "none";
+}
+
+/* ---------------------------------------------------------
+   APPEND MESSAGES TO DOM
+--------------------------------------------------------- */
+function appendMessage(role, content, isError = false) {
+  const container = document.getElementById("chatMessages");
+  const row = document.createElement("div");
+  row.className = `message-row ${role}`;
+
+  const avatar = document.createElement("div");
+  avatar.className = "msg-avatar";
+  avatar.textContent = role === "user" ? "You" : "◈";
+
+  const wrap = document.createElement("div");
+  wrap.style.display = "flex";
+  wrap.style.flexDirection = "column";
+  wrap.style.maxWidth = "75%";
+
+  const bubble = document.createElement("div");
+  bubble.className = "msg-bubble";
+  if (isError) bubble.style.borderColor = "var(--error)";
+
+  // Render markdown for assistant messages, plain text (escaped) for user
+  if (role === "assistant" && window.marked) {
+    bubble.innerHTML = marked.parse(content);
+  } else {
+    bubble.textContent = content;
+  }
+
+  const meta = document.createElement("div");
+  meta.className = "msg-meta";
+  const time = document.createElement("span");
+  time.textContent = formatTime(Date.now());
+  meta.appendChild(time);
+
+  if (role === "assistant") {
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy-btn";
+    copyBtn.textContent = "⧉ Copy";
+    copyBtn.onclick = () => copyToClipboard(content);
+    meta.appendChild(copyBtn);
+  }
+
+  wrap.appendChild(bubble);
+  wrap.appendChild(meta);
+  row.appendChild(avatar);
+  row.appendChild(wrap);
+  container.appendChild(row);
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendTypingIndicator() {
+  const container = document.getElementById("chatMessages");
+  const row = document.createElement("div");
+  row.className = "message-row assistant";
+  row.innerHTML = `
+    <div class="msg-avatar">◈</div>
+    <div class="msg-bubble loading">
+      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+    </div>
+  `;
+  container.appendChild(row);
+  container.scrollTop = container.scrollHeight;
+  return row;
+}
+
+function formatTime(ts) {
+  return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => showToast("Response copied to clipboard"));
+}
+
+/* ===========================================================
+   API LAYER — placeholder for n8n integration
+   -----------------------------------------------------------
+   Real integration:
+     1. Set API_CONFIG.useMock = false
+     2. Set API_CONFIG.endpoint to your n8n webhook URL
+        e.g. "https://your-n8n-instance.com/webhook/discourse-chat"
+     3. Ensure your n8n workflow returns JSON: { "reply": "..." }
+   The frontend code below does not need to change.
+=========================================================== */
+async function callChatAPI(message, sessionId) {
+  if (API_CONFIG.useMock) {
+    return mockAnalysisResponse(message);
+  }
+
+  const response = await fetch(API_CONFIG.endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, sessionId })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Server returned ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.reply || "*(No response received from the analysis engine.)*";
+}
+
+/* ---------------------------------------------------------
+   MOCK RESPONSE GENERATOR
+   Simulates an AI discourse analyst so the UI is fully
+   demonstrable before the n8n webhook is connected.
+--------------------------------------------------------- */
+function mockAnalysisResponse(message) {
+  return new Promise(resolve => {
+    const delay = 900 + Math.random() * 900;
+    setTimeout(() => {
+      const lower = message.toLowerCase();
+      let response;
+
+      if (lower.includes("speech act")) {
+        response = `### Speech Act Analysis\n\nBased on the text provided, here's a preliminary breakdown using Austin and Searle's framework:\n\n- **Locutionary act:** the literal propositional content of the utterance.\n- **Illocutionary act:** the communicative force — likely a mix of *assertives* and *directives* depending on context.\n- **Perlocutionary effect:** the intended effect on the listener (persuasion, compliance, reassurance).\n\n*Connect a live n8n + LLM backend to receive a full, text-specific analysis.*`;
+      } else if (lower.includes("cda") || lower.includes("power") || lower.includes("ideology")) {
+        response = `### Critical Discourse Analysis\n\nApplying a Faircloughian three-dimensional model:\n\n1. **Textual level** — vocabulary choices, transitivity, and modality that encode stance.\n2. **Discursive practice** — production and reception context, intertextual references.\n3. **Social practice** — how the text reproduces or challenges existing power structures.\n\nKey questions to explore: *Who is given voice? Whose perspective is backgrounded? What is presented as common sense?*\n\n*This is a demo response. Connect your n8n workflow for live, text-specific CDA output.*`;
+      } else if (lower.includes("framing") || lower.includes("media")) {
+        response = `### Media Framing Analysis\n\nLooking for these framing devices:\n\n- **Headline framing** — what's foregrounded vs. omitted\n- **Source selection** — whose voices are quoted, and in what order\n- **Lexical choices** — loaded terms vs. neutral terms\n- **Visual–verbal relationship** — if images accompany the text\n\n*Demo mode active. Connect the n8n backend for analysis grounded in your actual submitted text.*`;
+      } else if (lower.includes("marker")) {
+        response = `### Discourse Markers\n\nCommon categories to look for:\n\n- **Additive:** *and, furthermore, moreover*\n- **Contrastive:** *however, but, on the other hand*\n- **Causal:** *because, therefore, as a result*\n- **Temporal:** *then, meanwhile, subsequently*\n\nEach marker signals how the speaker wants the listener to relate adjacent units of discourse.\n\n*This is a sample structure — connect your n8n backend for markers identified in your specific text.*`;
+      } else if (lower.includes("politeness")) {
+        response = `### Politeness Strategy Analysis\n\nUsing Brown & Levinson's framework:\n\n- **Positive politeness** — appeals to solidarity, in-group markers\n- **Negative politeness** — hedging, indirectness, deference\n- **Bald on-record** — direct, face-threatening acts with no mitigation\n- **Off-record** — indirect hints relying on inference\n\n*Demo response — connect a live backend for analysis of your actual text.*`;
+      } else if (lower.includes("narrative")) {
+        response = `### Narrative Structure Analysis\n\nKey elements to examine:\n\n- **Structure:** orientation → complication → resolution (Labov's model)\n- **Focalization:** whose perspective dominates the telling\n- **Characterization:** how actors are positioned (agentive vs. passive)\n- **Temporal ordering:** chronological vs. achronological telling\n\n*This is a placeholder. Connect your n8n + LLM workflow for text-specific narrative analysis.*`;
+      } else if (lower.includes("persua")) {
+        response = `### Persuasive Technique Analysis\n\nClassical rhetorical appeals to check for:\n\n- **Ethos** — appeals to credibility/authority\n- **Pathos** — emotional appeals\n- **Logos** — logical/evidential appeals\n\nAlso watch for: repetition, rhetorical questions, hyperbole, and presupposition used to smuggle in assumptions.\n\n*Demo mode — connect n8n for live analysis of submitted text.*`;
+      } else if (lower.includes("pragmatic")) {
+        response = `### Pragmatic Analysis\n\nFraming questions:\n\n- **Implicature:** what is *suggested* but not literally stated (Grice's maxims)\n- **Presupposition:** what is assumed as already true\n- **Deixis:** context-dependent references (*this, here, now, I*)\n- **Relevance:** how hearers infer intended meaning from context\n\n*This is a sample structure. Connect your n8n backend for analysis grounded in your real text.*`;
+      } else if (lower.includes("conversation")) {
+        response = `### Conversation Analysis\n\nSequential organization to examine:\n\n- **Turn-taking** — how speakers gain and yield the floor\n- **Adjacency pairs** — question/answer, greeting/greeting\n- **Repair sequences** — self-repair vs. other-repair\n- **Overlaps and pauses** — interactional significance\n\n*Demo response. Connect the n8n webhook for transcript-specific CA findings.*`;
+      } else if (lower.includes("linguistic feature")) {
+        response = `### Linguistic Feature Detection\n\nLooking for:\n\n- **Modality** — degrees of certainty/obligation (*must, might, should*)\n- **Nominalization** — verbs turned into nouns, often obscuring agency\n- **Passive voice** — backgrounding the agent of an action\n- **Hedging** — softening claims (*perhaps, it seems, somewhat*)\n- **Evaluative lexis** — words carrying positive/negative stance\n\n*This is a placeholder response — connect your n8n backend for live detection.*`;
+      } else {
+        response = `Thanks for your message! I'm currently running in **demo mode** — once connected to the n8n backend, I'll provide a full discourse analysis grounded in linguistic theory.\n\nIn the meantime, try one of the quick analysis workflows in the sidebar, or ask me to:\n\n- Analyze a news article for framing\n- Identify discourse strategies in a speech\n- Explain speech acts in a conversation\n- Detect persuasive techniques\n\n*To connect a real AI backend: set \`API_CONFIG.useMock = false\` and point \`API_CONFIG.endpoint\` at your n8n webhook in app.js.*`;
+      }
+      resolve(response);
+    }, delay);
+  });
+}
+
+/* ===========================================================
+   SEARCH WITHIN CONVERSATION
+=========================================================== */
+function searchConversation() {
+  const bar = document.getElementById("searchBar");
+  bar.style.display = bar.style.display === "none" ? "flex" : "none";
+  if (bar.style.display === "flex") document.getElementById("searchInput").focus();
+}
+function closeSearch() {
+  document.getElementById("searchBar").style.display = "none";
+  document.getElementById("searchInput").value = "";
+  highlightSearch("");
+}
+function highlightSearch(query) {
+  const bubbles = document.querySelectorAll(".msg-bubble");
+  bubbles.forEach(b => {
+    // Reset
+    const original = b.dataset.original || b.innerHTML;
+    b.dataset.original = original;
+    if (!query) {
+      b.innerHTML = original;
+      return;
+    }
+    const regex = new RegExp(escapeRegex(query), "gi");
+    b.innerHTML = original.replace(regex, m => `<mark class="search-highlight">${m}</mark>`);
+  });
+}
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+/* ===========================================================
+   EXPORT CHAT (text file — PDF export hook included for Phase 2)
+=========================================================== */
+function exportChat() {
+  if (!chatHistory.length) {
+    showToast("No conversation to export yet");
+    return;
+  }
+  let text = `Discourse Helper — Conversation Export\n${new Date().toLocaleString()}\n${"=".repeat(40)}\n\n`;
+  chatHistory.forEach(m => {
+    text += `[${formatTime(m.timestamp)}] ${m.role === "user" ? "You" : "Discourse Helper"}:\n${m.content}\n\n`;
+  });
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `discourse-helper-chat-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Conversation exported");
+
+  /* Phase 2 hook: replace the above with a PDF export
+     using a library such as jsPDF or html2pdf once that
+     feature is prioritized. */
+}
+
+/* ===========================================================
+   LOCAL STORAGE — conversation persistence
+=========================================================== */
+function saveChatToStorage() {
+  try {
+    localStorage.setItem("dh-chat-" + sessionId, JSON.stringify(chatHistory));
+  } catch (e) { /* storage unavailable — fail silently */ }
+}
+function loadChatFromStorage() {
+  try {
+    const saved = localStorage.getItem("dh-chat-" + sessionId);
+    if (saved) {
+      chatHistory = JSON.parse(saved);
+      if (chatHistory.length) {
+        hideWelcome();
+        chatHistory.forEach(m => appendMessage(m.role, m.content));
+      }
+    }
+  } catch (e) { /* corrupted data — start fresh */ }
+}
+function getOrCreateSessionId(forceNew = false) {
+  if (!forceNew) {
+    const existing = localStorage.getItem("dh-session-id");
+    if (existing) return existing;
+  }
+  const id = "session-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+  localStorage.setItem("dh-session-id", id);
+  return id;
+}
+
+/* ===========================================================
+   FAQ ACCORDION
+=========================================================== */
+function toggleFaq(el) {
+  const wasOpen = el.classList.contains("open");
+  el.parentElement.querySelectorAll(".faq-item").forEach(i => i.classList.remove("open"));
+  if (!wasOpen) el.classList.add("open");
+}
+
+/* ===========================================================
+   CONTACT FORM (placeholder submit handler)
+=========================================================== */
+function submitContact(e) {
+  e.preventDefault();
+  const form = document.getElementById("contactForm");
+  const success = document.getElementById("formSuccess");
+
+  // Placeholder: in production, POST this to your backend / n8n
+  const payload = {
+    name: document.getElementById("contactName").value,
+    email: document.getElementById("contactEmail").value,
+    subject: document.getElementById("contactSubject").value,
+    message: document.getElementById("contactMessage").value
+  };
+  console.log("Contact form submission (placeholder):", payload);
+
+  form.style.display = "none";
+  success.style.display = "block";
+
+  setTimeout(() => {
+    form.reset();
+    form.style.display = "flex";
+    form.style.flexDirection = "column";
+    success.style.display = "none";
+  }, 4000);
+}
+
+/* ===========================================================
+   TOAST NOTIFICATIONS
+=========================================================== */
+let toastTimeout;
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+</script>
+</body>
+</html>
