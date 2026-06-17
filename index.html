@@ -2041,8 +2041,8 @@ mark.search-highlight {
    Expected response body: { reply: string }  (markdown allowed)
 --------------------------------------------------------- */
 const API_CONFIG = {
-  endpoint: "/api/chat", // placeholder — point this at your n8n webhook in production
-  useMock: true          // set to false once a real n8n endpoint is connected
+  endpoint: "https://rajashahidali35.app.n8n.cloud/webhook/c2870068-2884-4d47-aa88-51a4fc32bd8a/chat",
+  useMock: false          // live n8n webhook connected — demo mode is off
 };
 
 /* ---------------------------------------------------------
@@ -2341,7 +2341,11 @@ async function sendMessage() {
     saveChatToStorage();
   } catch (err) {
     typingEl.remove();
-    appendMessage("assistant", "⚠️ **Connection error.** I couldn't reach the analysis engine. Please check your connection and try again.\n\n*(" + (err.message || "Unknown error") + ")*", true);
+    const isLikelyCors = err instanceof TypeError; // fetch throws a bare TypeError on CORS/network block
+    const hint = isLikelyCors
+      ? "This is often a **CORS** issue — open your n8n workflow's Chat Trigger node and make sure 'Allowed Origins (CORS)' includes this site's domain (or `*` for testing)."
+      : "Please check your connection and try again.";
+    appendMessage("assistant", `⚠️ **Connection error.** I couldn't reach the analysis engine.\n\n${hint}\n\n*(${err.message || "Unknown error"})*`, true);
   } finally {
     isSending = false;
     setChatStatus("Ready");
@@ -2433,14 +2437,15 @@ function copyToClipboard(text) {
 }
 
 /* ===========================================================
-   API LAYER — placeholder for n8n integration
+   API LAYER — connected to live n8n webhook
    -----------------------------------------------------------
-   Real integration:
-     1. Set API_CONFIG.useMock = false
-     2. Set API_CONFIG.endpoint to your n8n webhook URL
-        e.g. "https://your-n8n-instance.com/webhook/discourse-chat"
-     3. Ensure your n8n workflow returns JSON: { "reply": "..." }
-   The frontend code below does not need to change.
+   This calls your n8n Chat Trigger webhook directly.
+   n8n's Chat Trigger node expects a POST body shaped like:
+     { chatInput: "...", sessionId: "..." }
+   and typically responds with one of:
+     { output: "..." }  or  { text: "..." }  or  { reply: "..." }
+   parseN8nReply() below checks all of these so it works
+   regardless of how the workflow's final node is configured.
 =========================================================== */
 async function callChatAPI(message, sessionId) {
   if (API_CONFIG.useMock) {
@@ -2450,7 +2455,12 @@ async function callChatAPI(message, sessionId) {
   const response = await fetch(API_CONFIG.endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, sessionId })
+    body: JSON.stringify({
+      chatInput: message,   // n8n Chat Trigger's expected field name
+      message: message,     // also included in case your workflow reads "message"
+      sessionId: sessionId,
+      action: "sendMessage"
+    })
   });
 
   if (!response.ok) {
@@ -2458,7 +2468,24 @@ async function callChatAPI(message, sessionId) {
   }
 
   const data = await response.json();
-  return data.reply || "*(No response received from the analysis engine.)*";
+  return parseN8nReply(data);
+}
+
+/* Pull the reply text out of whatever shape n8n sends back */
+function parseN8nReply(data) {
+  if (typeof data === "string") return data;
+  if (Array.isArray(data) && data.length) return parseN8nReply(data[0]);
+  if (data == null) return "*(No response received from the analysis engine.)*";
+
+  return (
+    data.output ??
+    data.reply ??
+    data.text ??
+    data.message ??
+    data.response ??
+    (data.json ? parseN8nReply(data.json) : null) ??
+    "*(No response received from the analysis engine.)*"
+  );
 }
 
 /* ---------------------------------------------------------
@@ -2637,16 +2664,5 @@ function showToast(message) {
 
 </script>
 
-<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
-<script type="module">
-	import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
-	createChat({
-		webhookUrl: 'https://rajashahidali35.app.n8n.cloud/webhook/c2870068-2884-4d47-aa88-51a4fc32bd8a/chat'
-	});
-</script>
-
-
-  
 </body>
 </html>
